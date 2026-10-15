@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Air Canvas · draw with your hand</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>Air Canvas</h1>
+      <p class="sub">Draw in the air with your index finger. A hand-tracking AI (MediaPipe) reads your gestures, and OpenCV turns wobbly sketches into clean shapes.</p>
+    </div>
+    <div class="status" aria-live="polite">
+      <span class="pill" id="pill-model">Checking…</span>
+      <span class="pill" id="pill-fps">– fps</span>
+      <span class="pill" id="pill-ms">– ms</span>
+      <span class="pill gesture" id="pill-gesture">no hand</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="stage-col">
+      <div class="panel">
+        <div class="bar">
+          <div class="group">
+            <button class="btn primary" id="btn-start">Start camera</button>
+            <button class="btn" id="btn-stop" disabled>Stop</button>
+          </div>
+          <div class="group seg" role="group" aria-label="Background">
+            <button class="seg-btn active" data-bg="camera" aria-pressed="true">Camera</button>
+            <button class="seg-btn" data-bg="white" aria-pressed="false">Whiteboard</button>
+          </div>
+          <div class="group toggles">
+            <label><input type="checkbox" id="opt-glow" checked> Neon glow</label>
+            <label><input type="checkbox" id="opt-snap" checked> Snap shapes</label>
+            <label><input type="checkbox" id="opt-hand" checked> Show hand</label>
+          </div>
+        </div>
+
+        <div class="stage">
+          <canvas id="stage" width="1280" height="720"></canvas>
+          <video id="video" playsinline muted class="hidden-media"></video>
+        </div>
+        <p class="hint" id="hint">Press “Start camera” and raise one index finger. No camera? You can draw with the mouse too.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Gestures</h2>
+        <div class="guide" id="guide">
+          <div class="card" data-gesture="point"><span class="emo">☝️</span><b>One finger</b><span>Draw</span></div>
+          <div class="card" data-gesture="two"><span class="emo">✌️</span><b>Two fingers</b><span>Pick from the top toolbar</span></div>
+          <div class="card" data-gesture="pinch"><span class="emo">🤏</span><b>Pinch</b><span>Erase strokes you touch</span></div>
+          <div class="card" data-gesture="three"><span class="emo">3️⃣</span><b>Three fingers</b><span>Hold: undo</span></div>
+          <div class="card" data-gesture="open_palm"><span class="emo">🖐️</span><b>Open palm</b><span>Hold: clear all</span></div>
+          <div class="card" data-gesture="thumbs_up"><span class="emo">👍</span><b>Thumbs up</b><span>Hold: save drawing</span></div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side-col">
+      <div class="panel">
+        <h2>Tools</h2>
+        <div class="swatches" id="swatches" role="group" aria-label="Brush colour"></div>
+        <div class="field">
+          <label for="size">Brush size <output id="size-out">8</output></label>
+          <input type="range" id="size" min="2" max="40" value="8">
+        </div>
+        <div class="field">
+          <label for="title">Title for saving</label>
+          <input type="text" id="title" maxlength="60" placeholder="optional">
+        </div>
+        <div class="btn-grid">
+          <button class="btn" id="btn-undo">Undo</button>
+          <button class="btn" id="btn-redo">Redo</button>
+          <button class="btn" id="btn-clear">Clear</button>
+          <button class="btn" id="btn-png">Download PNG</button>
+          <button class="btn primary wide" id="btn-save">Save drawing</button>
+        </div>
+        <div class="kpis">
+          <div><span class="kpi" id="k-strokes">0</span><span class="muted small">strokes</span></div>
+          <div><span class="kpi" id="k-snapped">0</span><span class="muted small">shapes snapped</span></div>
+        </div>
+        <button class="btn wide" id="btn-stop-replay" hidden>Stop replay</button>
+      </div>
+
+      <div class="panel">
+        <h2>Saved drawings</h2>
+        <div class="gallery" id="gallery"></div>
+        <p class="muted small" id="gallery-empty" hidden>Nothing saved yet. Press “Save drawing”, or hold a thumbs-up.</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="foot muted small">
+    Open-source stack: MediaPipe Hands (Apache-2.0) · OpenCV (Apache-2.0) · Flask (BSD-3) · NumPy · SQLite
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/board.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
